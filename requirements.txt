@@ -1,0 +1,16 @@
+numpy
+ffmpeg-python
+opencv-python
+scipy
+loguru
+omegaconf
+tensorboard
+trimesh
+packaging
+matplotlib
+kornia
+scikit-learn
+chumpy
+mediapipe
+face_alignment
+gdown

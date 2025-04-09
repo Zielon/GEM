@@ -1,0 +1,57 @@
+capture_id: UNION10_253
+actor_id: /media/wojciech/hdd/datasets/NERSEMBLE/tracking/sequences/${capture_id}/
+dataset_name: NERSEMBLE
+ds_rate: 1
+width: 550
+height: 802
+
+data:
+  image: ${actor_id}/images
+  mask: ${actor_id}/fg_masks
+  mesh: ${actor_id}/tracked_mesh
+  canonical_mesh: ${actor_id}/canonical.ply
+  test_camera: "08"
+  identity_frame: "00000_08"
+
+### TRAIN CONFIG
+
+train:
+  tag: gem
+  exp_name: default
+  run_dir: /home/wojciech/projects/gem/experiments/${.tag}/${capture_id}/${.exp_name}/
+  ckpt_dir: ${.run_dir}/checkpoints
+  tb_dir: ${.run_dir}/tb
+  progress_dir: ${.run_dir}/progress
+  results_dir: ${.run_dir}/results
+  uv_size: 256
+  batch_size: 1
+  num_workers: 8
+  log_progress_n_steps: 3_000
+  log_n_steps: 50
+  checkpoint_n_steps: 30_000
+  iterations: 1_000_000
+  bg_color: "white"
+  use_feature_map: true
+
+  use_bg_net: false
+  use_color_calib: false
+  use_pixel_bias: false
+
+  # Network
+  use_def_grad_map: false
+  use_pca_layer: true
+  pca_n_components: 16
+  use_sh: false
+  use_shadow: false
+  use_uv_sampling: false
+  unet_scale: 1
+  unet_multiplayer: 2
+  fix_rgb: true
+
+  optimizer:
+    class_name: torch.optim.Adam
+
+  lr_scheduler:
+    class_name: torch.optim.lr_scheduler.MultiStepLR
+    milestones: [350_000, 700_000]
+    gamma: 0.33

@@ -1,0 +1,62 @@
+capture_id: UNION10_253
+actor_id: /media/wojciech/hdd/datasets/NERSEMBLE/tracking/sequences/${capture_id}/
+dataset_name: NERSEMBLE
+regressor: DECA
+ds_rate: 1
+width: 550
+height: 802
+
+data:
+  image: ${actor_id}/images
+  mask: ${actor_id}/fg_masks
+  mesh: ${actor_id}/tracked_mesh
+  canonical_mesh: ${actor_id}/canonical.ply
+  test_camera: "08"
+  identity_frame: "00000_08"
+  join_configs: true
+  camera_list: ["10", "06", "08", "04", "12"]
+  use_sampler: false
+
+### TRAIN CONFIG
+
+train:
+  tag: regressor
+  exp_name: relative_gem
+  run_dir: /home/wojciech/projects/gem/experiments/${.tag}/${capture_id}/${.exp_name}/
+  ckpt_dir: ${.run_dir}/checkpoints
+  tb_dir: ${.run_dir}/tb
+  progress_dir: ${.run_dir}/progress
+  results_dir: ${.run_dir}/results
+  trainer: regressor
+  regressor_model: MLP
+  use_parts: false
+  # See gem/masks/flame for available masks
+  test_disable_regions: ["hair"]
+
+  use_pretrained_deca: true
+  use_data_augmentation: true
+  bg_color: "white"
+  uv_size: 256
+  batch_size: 1
+  shuffle: true
+  num_workers: 8
+  log_progress_n_steps: 2500
+  log_n_steps: 50
+  checkpoint_n_steps: 10_000
+  iterations: 200_000
+  warmup: 50_000
+
+  # Regressor settings
+  use_expr: false
+  use_deca_relative: false
+  use_emoca_relative: false
+  use_both_relative: true
+  use_absolute: false
+
+  optimizer:
+    class_name: torch.optim.AdamW
+
+  lr_scheduler:
+    class_name: torch.optim.lr_scheduler.MultiStepLR
+    milestones: [30_000, 60_000, 80_000]
+    gamma: 0.33
