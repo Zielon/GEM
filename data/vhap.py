@@ -181,6 +181,10 @@ class VHAPDataset(BaseDataset):
         flame_params = np.load(self.parse(frame["flame_param_path"]))
         flame_params = to_dict(flame_params)
         mesh = to_canonical(flame_params)
+
+        if self.config.train.get("canonical_mesh", False) and os.path.exists(self.config.train.canonical_mesh):
+            mesh = trimesh.load(self.config.train.canonical_mesh, process=False)
+
         verts = mesh.vertices
         faces = mesh.faces
 

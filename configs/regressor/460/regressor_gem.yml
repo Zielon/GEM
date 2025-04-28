@@ -10,7 +10,6 @@ data:
   image: ${actor_id}/images
   mask: ${actor_id}/fg_masks
   mesh: ${actor_id}/tracked_mesh
-  canonical_mesh: ${actor_id}/canonical.ply
   test_camera: "08"
   identity_frame: "00000_08"
   join_configs: true
@@ -24,6 +23,7 @@ train:
   exp_name: relative_gem
   run_dir: /home/wojciech/projects/gem/experiments/${.tag}/${capture_id}/${.exp_name}/
   ckpt_dir: ${.run_dir}/checkpoints
+  canonical_mesh: ${.run_dir}/canonical.ply
   tb_dir: ${.run_dir}/tb
   progress_dir: ${.run_dir}/progress
   results_dir: ${.run_dir}/results

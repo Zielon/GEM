@@ -138,19 +138,21 @@ def to_dict(npz):
     return params
 
 
-def to_canonical(params):
-    neck_pose = th.from_numpy(params["neck_pose"]).float() * 0
+def to_canonical(params, T=None):
     jaw_pose = th.from_numpy(params["jaw_pose"]).float() * 0
     eyes_pose = th.from_numpy(params["eyes_pose"]).float() * 0
-    shape = th.from_numpy(params["shape"]).float()
     expr = th.from_numpy(params["expr"]).float() * 0
+    # Do not change
+    shape = th.from_numpy(params["shape"]).float()
+    neck_pose = th.from_numpy(params["neck_pose"]).float()
 
     angle = np.radians(20)
     jaw_pose[:, 0] = angle
 
     R = th.zeros([1, 3])
-    T = th.zeros([1, 3])
     pose = th.cat([R, jaw_pose], dim=-1).float()
+
+    # Apply hair
     static_offset = th.from_numpy(params["static_offset"])[:, :5023, :].float()
 
     vertices = flame(

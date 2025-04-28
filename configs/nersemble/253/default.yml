@@ -19,6 +19,7 @@ train:
   exp_name: default
   run_dir: /home/wojciech/projects/gem/experiments/${.tag}/${capture_id}/${.exp_name}/
   ckpt_dir: ${.run_dir}/checkpoints
+  canonical_mesh: ${.run_dir}/canonical.ply
   tb_dir: ${.run_dir}/tb
   progress_dir: ${.run_dir}/progress
   results_dir: ${.run_dir}/results

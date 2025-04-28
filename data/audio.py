@@ -24,6 +24,7 @@ import cv2
 import numpy as np
 import torch as th
 import trimesh
+import os
 from data.base import BaseDataset, DatasetMode
 from data.utils import load_obj, opengl_to_opencv
 from utils.geometry import AttrDict
@@ -151,6 +152,10 @@ class AudioDataset(BaseDataset):
         flame_params = np.load(self.parse(frame["flame_param_path"]))
         flame_params = to_dict(flame_params)
         mesh = to_canonical(flame_params)
+
+        if self.config.train.get("canonical_mesh", False) and os.path.exists(self.config.train.canonical_mesh):
+            mesh = trimesh.load(self.config.train.canonical_mesh, process=False)
+
         verts = mesh.vertices
         faces = mesh.faces
 
