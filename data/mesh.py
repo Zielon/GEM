@@ -136,3 +136,31 @@ def to_dict(npz):
     for key in ["neck_pose", "jaw_pose", "eyes_pose", "shape", "expr", "static_offset", "rotation", "translation"]:
         params[key] = npz[key]
     return params
+
+
+def to_canonical(params):
+    neck_pose = th.from_numpy(params["neck_pose"]).float() * 0
+    jaw_pose = th.from_numpy(params["jaw_pose"]).float() * 0
+    eyes_pose = th.from_numpy(params["eyes_pose"]).float() * 0
+    shape = th.from_numpy(params["shape"]).float()
+    expr = th.from_numpy(params["expr"]).float() * 0
+
+    angle = np.radians(20)
+    jaw_pose[:, 0] = angle
+
+    R = th.zeros([1, 3])
+    T = th.zeros([1, 3])
+    pose = th.cat([R, jaw_pose], dim=-1).float()
+    static_offset = th.from_numpy(params["static_offset"])[:, :5023, :].float()
+
+    vertices = flame(
+        shape_params=shape, 
+        expression_params=expr, 
+        pose_params=pose, 
+        neck_pose=neck_pose, 
+        eye_pose=eyes_pose, 
+        delta=static_offset,
+        transl=T
+    )[0]
+
+    return trimesh.Trimesh(vertices[0].numpy(), faces, process=False)

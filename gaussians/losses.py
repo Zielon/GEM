@@ -161,8 +161,8 @@ class VGGLoss(nn.Module):
         
     def forward(self, pred, gt):
         loss = 0
-        source = F.upsample(pred, size=(512, 512), mode='bilinear')
-        target = F.upsample(gt, size=(512, 512), mode='bilinear')
+        source = F.interpolate(pred, size=(512, 512), mode='bilinear')
+        target = F.interpolate(gt, size=(512, 512), mode='bilinear')
         for layer, weight in zip(self.layers, self.weights):
             source = layer(source)
             with torch.no_grad():

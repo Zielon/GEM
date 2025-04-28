@@ -9,7 +9,6 @@ data:
   image: ${actor_id}/images
   mask: ${actor_id}/fg_masks
   mesh: ${actor_id}/tracked_mesh
-  canonical_mesh: ${actor_id}/canonical.ply
   test_camera: "08"
   identity_frame: "00000_08"
 

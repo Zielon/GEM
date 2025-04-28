@@ -27,6 +27,19 @@ import trimesh
 from data.base import BaseDataset, DatasetMode
 from data.utils import load_obj, opengl_to_opencv
 from utils.geometry import AttrDict
+from data.mesh import to_mesh, to_canonical
+
+
+def to_dict(npz):
+    params = {}
+    for key in ["neck_pose", "jaw_pose", "eyes_pose", "shape", "expr", "static_offset", "rotation", "translation"]:
+        val = np.array(npz[key]).astype(np.float32)
+        if key != "shape":
+            val = val[0:1]
+        else:
+            val = val[None]
+        params[key] = val
+    return params
 
 
 def get_transforms(path):
@@ -134,7 +147,10 @@ class AudioDataset(BaseDataset):
         self.mesh_topology = obj
 
     def get_canonical_mesh(self):
-        mesh = trimesh.load(self.config.data.canonical_mesh, process=False)
+        frame = self.frame_list[0]
+        flame_params = np.load(self.parse(frame["flame_param_path"]))
+        flame_params = to_dict(flame_params)
+        mesh = to_canonical(flame_params)
         verts = mesh.vertices
         faces = mesh.faces
 

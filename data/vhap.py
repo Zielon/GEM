@@ -26,7 +26,7 @@ import numpy as np
 import torch as th
 import trimesh
 from data.base import BaseDataset, DatasetMode
-from data.mesh import to_mesh
+from data.mesh import to_mesh, to_canonical
 from data.utils import load_obj, opengl_to_opencv
 from utils.geometry import AttrDict
 from scipy.spatial.transform import Rotation as R
@@ -177,7 +177,10 @@ class VHAPDataset(BaseDataset):
         self.mesh_topology = obj
 
     def get_canonical_mesh(self):
-        mesh = trimesh.load(self.config.data.canonical_mesh, process=False)
+        frame = self.frame_list[0]
+        flame_params = np.load(self.parse(frame["flame_param_path"]))
+        flame_params = to_dict(flame_params)
+        mesh = to_canonical(flame_params)
         verts = mesh.vertices
         faces = mesh.faces
 
